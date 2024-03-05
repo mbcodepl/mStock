@@ -1,7 +1,4 @@
 {
-    "alpha_vantage": {
-        "api_key": "3CYO1PYUMARJEH4C"
-    },
     "refresh_rate": 10,
     "default_stocks": [
         "AAPL",
