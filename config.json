@@ -1,0 +1,18 @@
+{
+    "alpha_vantage": {
+        "api_key": "3CYO1PYUMARJEH4C"
+    },
+    "refresh_rate": 10,
+    "default_stocks": [
+        "AAPL",
+        "MSFT",
+        "AI",
+        "AMZN",
+        "CDR.WA",
+        "PKN.WA"
+    ],
+    "currency_map": {
+        ".WA": "PLN",
+        "": "USD"
+    }
+}
