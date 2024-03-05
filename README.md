@@ -12,12 +12,13 @@ Next, you'll need to install the required Python package `yfinance` and `pandas`
 
 ```bash
 pip install yfinance pandas
+```
 
 Configuration
 
 Before using the script, set up the config.json file with your preferred settings. Here's a template for config.json:
 
-json
+```json
 Copy code
 {
   "alpha_vantage": {
@@ -31,9 +32,7 @@ Copy code
 "": "USD" // Assuming empty means it's a US stock
 }
 }
-
-javascript
-Copy code
+```
 
 Replace `your_api_key_here` with your actual API key for Alpha Vantage if needed, though this script primarily uses `yfinance`, which does not require an API key.
 
