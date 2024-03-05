@@ -19,22 +19,15 @@ Configuration
 Before using the script, set up the config.json file with your preferred settings. Here's a template for config.json:
 
 ```json
-Copy code
 {
-  "alpha_vantage": {
-    "api_key": "your_api_key_here"
-  },
   "refresh_rate": 10,
-  "default_stocks":
-["AAPL", "MSFT", "CDR.WA", "PKN.WA"],
-"currency_map": {
-".WA": "PLN",
-"": "USD" // Assuming empty means it's a US stock
-}
+  "default_stocks":["AAPL", "MSFT", "CDR.WA", "PKN.WA"],
+  "currency_map": {
+    ".WA": "PLN",
+    "": "USD" // Assuming empty means it's a US stock
+    }
 }
 ```
-
-Replace `your_api_key_here` with your actual API key for Alpha Vantage if needed, though this script primarily uses `yfinance`, which does not require an API key.
 
 ## Usage
 
@@ -42,3 +35,18 @@ To run the script, navigate to the project directory in your terminal or command
 
 ```bash
 python stock_prices.py
+```
+
+Upon running the script, you will be prompted to enter stock symbols separated by a semicolon (;). If you simply press Enter, the script will use the default stocks specified in config.json.
+
+The script will then fetch the stock prices and display them, refreshing every few seconds based on the refresh_rate defined in the config.json file.
+
+To stop the script, use the keyboard interrupt command, usually Ctrl+C.
+
+License
+
+This project is licensed under the MIT License - see the LICENSE.md file for details.
+
+Contributing
+
+Contributions are welcome. Please open an issue first to discuss what you would like to change or add.
