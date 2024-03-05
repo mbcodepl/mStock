@@ -14,7 +14,7 @@ Next, you'll need to install the required Python package `yfinance` and `pandas`
 pip install yfinance pandas
 ```
 
-Configuration
+## Configuration
 
 Before using the script, set up the config.json file with your preferred settings. Here's a template for config.json:
 
@@ -41,12 +41,12 @@ Upon running the script, you will be prompted to enter stock symbols separated b
 
 The script will then fetch the stock prices and display them, refreshing every few seconds based on the refresh_rate defined in the config.json file.
 
-To stop the script, use the keyboard interrupt command, usually Ctrl+C.
+To stop the script, use the keyboard interrupt command, usually Ctrl+C or Ctrl+Z.
 
-License
+## License
 
 This project is licensed under the MIT License - see the LICENSE.md file for details.
 
-Contributing
+## Contributing
 
 Contributions are welcome. Please open an issue first to discuss what you would like to change or add.
