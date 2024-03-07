@@ -32,7 +32,17 @@ class TestStocksManager(unittest.TestCase):
         trend = stocks_manager._format_trend(5, 10, "USD")
         self.assertIn("+5.00 USD (10.00%) ↑", trend)
 
-    # You can add more tests to cover the negative and zero change scenarios
+    def test_format_trend_negative(self):
+        config = Config()  # Mock this if needed
+        stocks_manager = StocksManager(config)
+        trend = stocks_manager._format_trend(-5, -10, "USD")
+        self.assertIn("-5.00 USD (10.00%) ↓", trend)
+
+    def test_format_trend_no_change(self):
+        config = Config()  # Mock this if needed
+        stocks_manager = StocksManager(config)
+        trend = stocks_manager._format_trend(0, 0, "USD")
+        self.assertIn("0.00 USD (0.00%)", trend)
 
 if __name__ == '__main__':
     unittest.main()
