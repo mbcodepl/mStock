@@ -34,7 +34,7 @@ Before using the script, set up the config.json file with your preferred setting
 To run the script, navigate to the project directory in your terminal or command prompt and execute the script with Python:
 
 ```bash
-python stock_prices.py
+python main.py
 ```
 
 Upon running the script, you will be prompted to enter stock symbols separated by a semicolon (;). If you simply press Enter, the script will use the default stocks specified in config.json.
