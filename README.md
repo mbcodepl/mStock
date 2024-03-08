@@ -11,7 +11,7 @@ Once Python is installed, clone the repository or download the source code to yo
 Next, you'll need to install the required Python package `yfinance` and `pandas`. Run the following command to install them:
 
 ```bash
-pip install yfinance pandas
+pip install -r requiremnts.txt
 ```
 
 ## Configuration
