@@ -1,5 +1,7 @@
 import unittest
 from unittest.mock import patch, MagicMock
+
+import pandas as pd
 from mstocks.config import Config
 from mstocks.stocks import StocksManager
 
@@ -43,6 +45,27 @@ class TestStocksManager(unittest.TestCase):
         stocks_manager = StocksManager(config)
         trend = stocks_manager._format_trend(0, 0, "USD")
         self.assertIn("0.00 USD (0.00%)", trend)
+
+    @patch('mstocks.stocks.yf.Ticker')
+    def test_get_crypto_prices(self, mock_ticker):
+        # Setup a mock DataFrame response
+        data = {
+            'Close': [50000, 51000],
+        }
+        mock_hist = pd.DataFrame(data)
+
+        # Mock the history method to return our mock DataFrame
+        mock_ticker.return_value.history.return_value = mock_hist
+
+        # Assuming your StocksManager initialization is properly set up
+        config = {"currency_map": {"BTC-USD": "USD"}, 'default_stocks': [], 'refresh_rate': 60}
+        manager = StocksManager(config)
+
+        result = manager.get_crypto_prices("BTC-USD")
+        # Adjust your assertions as necessary. The following is a placeholder.
+        # For example, check if "BTC-USD" or "51000.00 USD" appears in any of the strings in the result list.
+        self.assertTrue(any("BTC-USD" in item for item in result[0]), "BTC-USD should be in the results")
+
 
 if __name__ == '__main__':
     unittest.main()

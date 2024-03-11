@@ -9,7 +9,7 @@ def main():
     stocks_manager = StocksManager(config)
 
     # Run the main loop
-    stocks_manager.display_stock_prices()
+    stocks_manager.display_prices()
 
 if __name__ == "__main__":
     main()

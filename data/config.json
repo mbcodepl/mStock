@@ -4,9 +4,11 @@
         "AAPL",
         "MSFT",
         "AI",
-        "AMZN",
-        "CDR.WA",
-        "PKN.WA"
+        "AMZN"
+    ],
+    "default_cryptos": [
+        "BTC-USD",
+        "ETH-USD"
     ],
     "currency_map": {
         ".WA": "PLN",
