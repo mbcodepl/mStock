@@ -6,7 +6,8 @@ from .config import Config
 from .utils import Utils
 
 class StocksManager:
-    def __init__(self, config):
+    def __init__(self, config, crypto_enabled = True):
+        self.crypto_enabled = crypto_enabled
         self.config = config
         self.utils = Utils()
         self.market = Market(self.utils)
@@ -91,12 +92,14 @@ class StocksManager:
         combined_stock_symbols = list(set(default_stocks + stock_symbols))
         sorted_stock_symbols = sorted(combined_stock_symbols)
 
-        # Prompt for cryptocurrency symbols
-        default_cryptos = self.config.get('default_cryptos', [])
-        crypto_input = input("Enter cryptocurrency symbols separated by semicolon (;), or press Enter to use default cryptocurrencies: ")
-        crypto_symbols = crypto_input.split(';') if crypto_input.strip() else []
-        combined_crypto_symbols = list(set(default_cryptos + crypto_symbols))
-        sorted_crypto_symbols = sorted(combined_crypto_symbols)
+
+        if self.crypto_enabled:
+            # Prompt for cryptocurrency symbols
+            default_cryptos = self.config.get('default_cryptos', [])
+            crypto_input = input("Enter cryptocurrency symbols separated by semicolon (;), or press Enter to use default cryptocurrencies: ")
+            crypto_symbols = crypto_input.split(';') if crypto_input.strip() else []
+            combined_crypto_symbols = list(set(default_cryptos + crypto_symbols))
+            sorted_crypto_symbols = sorted(combined_crypto_symbols)
 
         while True:
             print("Refreshing...")
@@ -109,7 +112,7 @@ class StocksManager:
                 self.utils.print_table_with_fixed_width(stock_prices)
 
             # Fetch and display cryptocurrency prices
-            if sorted_crypto_symbols:
+            if self.crypto_enabled and sorted_crypto_symbols:
                 crypto_prices = self.get_crypto_prices(";".join(sorted_crypto_symbols))
                 # If there were stock symbols, add a separation line for clarity
                 if sorted_stock_symbols:
