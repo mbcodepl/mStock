@@ -121,4 +121,3 @@ class StocksManager:
                 self.utils.print_table_with_fixed_width(crypto_prices)
 
             time.sleep(self.config.get('refresh_rate', 60))  # Default to 60 seconds
-
