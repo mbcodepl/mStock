@@ -25,6 +25,17 @@ class TestUtils(unittest.TestCase):
         currency = Utils.get_currency(symbol, currency_map)
         self.assertEqual(currency, "USD")
 
+    def test_get_currency_new_extension(self):
+        currency_map = {
+            ".US": "USD",
+            ".UK": "GBP",
+            ".EU": "EUR",
+            ".JP": "JPY"
+        }
+        symbol = "SONY.JP"
+        currency = Utils.get_currency(symbol, currency_map)
+        self.assertEqual(currency, "JPY")
+
     @patch('sys.stdout', new_callable=StringIO)
     def test_print_table_with_fixed_width(self, mock_stdout):
         prices = [
@@ -33,6 +44,19 @@ class TestUtils(unittest.TestCase):
         ]
         Utils.print_table_with_fixed_width(prices)
         output = mock_stdout.getvalue()
+        self.assertIn("Market status", output)
+        self.assertIn("Apple Inc.", output)
+        self.assertIn("Microsoft Corp.", output)
+
+    @patch('sys.stdout', new_callable=StringIO)
+    def test_print_table_without_market_status(self, mock_stdout):
+        prices = [
+            ["10:00", "AAPL", "Apple Inc.", "$150.00", "+1.00 (0.67%) ↑"],
+            ["16:00", "MSFT", "Microsoft Corp.", "$250.00", "-2.00 (0.80%) ↓"]
+        ]
+        Utils.print_table_with_fixed_width(prices, include_market_status=False)
+        output = mock_stdout.getvalue()
+        self.assertNotIn("Market status", output)
         self.assertIn("Apple Inc.", output)
         self.assertIn("Microsoft Corp.", output)
         self.assertIn("+1.00 (0.67%) ↑", output)

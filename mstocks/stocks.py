@@ -6,12 +6,12 @@ from .config import Config
 from .utils import Utils
 
 class StocksManager:
-    def __init__(self, config, crypto_enabled = True):
-        self.crypto_enabled = crypto_enabled
+    def __init__(self, config):
         self.config = config
         self.utils = Utils()
         self.market = Market(self.utils)
         self.currency_map = config.get('currency_map', {"": "USD"})
+        self.crypto_enabled = config.get('crypto', True)
 
     def get_stock_prices(self, symbols):
         prices = []
@@ -118,7 +118,6 @@ class StocksManager:
                 if sorted_stock_symbols:
                     print("\n" + "-" * 50 + "\n")
                 print("Cryptocurrency Prices as of " + now)
-                self.utils.print_table_with_fixed_width(crypto_prices)
+                self.utils.print_table_with_fixed_width(crypto_prices, False)
 
             time.sleep(self.config.get('refresh_rate', 60))  # Default to 60 seconds
-            

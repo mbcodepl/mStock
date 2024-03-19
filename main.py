@@ -11,14 +11,14 @@ def main():
     # Parse arguments
     args = parser.parse_args()
     
-    # Convert crypto argument to boolean
-    crypto_enabled = False if args.crypto.lower() == 'false' else True
+    # # Convert crypto argument to boolean
+    # crypto_enabled = False if args.crypto.lower() == 'false' else True
 
     # Load configuration
     config = Config()
 
     # Create a StocksManager instance
-    stocks_manager = StocksManager(config, crypto_enabled)
+    stocks_manager = StocksManager(config)
 
     # Run the main loop
     stocks_manager.display_prices()

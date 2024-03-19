@@ -1,5 +1,6 @@
 {
     "refresh_rate": 10,
+    "crypto": "False",
     "default_stocks": [
         "AAPL",
         "MSFT",
