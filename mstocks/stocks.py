@@ -2,6 +2,7 @@ import yfinance as yf
 import time
 from datetime import datetime
 from .market import Market
+from .config import Config
 from .utils import Utils
 
 class StocksManager:
