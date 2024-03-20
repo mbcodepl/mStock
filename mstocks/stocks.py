@@ -85,40 +85,45 @@ class StocksManager:
         else:
             return f"{price_change:.2f} {currency} ({percent_change:.2f}%)"
         
-    def display_prices(self):
-        # Prompt for stock symbols
+    def collect_symbols(self, text):
+        inpt = input(text)
+        return inpt.split(';') if inpt.strip() else []
+    
+    def display_prices(self, stock_symbols_input=None, crypto_symbols_input=None):
         default_stocks = self.config.get('default_stocks', [])
-        stock_input = input("Enter stock symbols separated by semicolon (;), or press Enter to use default stocks: ")
-        stock_symbols = stock_input.split(';') if stock_input.strip() else []
+        stock_symbols = stock_symbols_input if stock_symbols_input is not None else self.collect_symbols("Enter stock symbols separated by semicolon (;), or press Enter to use default stocks: ")
         combined_stock_symbols = list(set(default_stocks + stock_symbols))
         sorted_stock_symbols = sorted(combined_stock_symbols)
 
-        
-        if self.crypto_enabled:
-            # Prompt for cryptocurrency symbols
-            default_cryptos = self.config.get('default_cryptos', [])
-            crypto_input = input("Enter cryptocurrency symbols separated by semicolon (;), or press Enter to use default cryptocurrencies: ")
-            crypto_symbols = crypto_input.split(';') if crypto_input.strip() else []
-            combined_crypto_symbols = list(set(default_cryptos + crypto_symbols))
-            sorted_crypto_symbols = sorted(combined_crypto_symbols)
+        default_cryptos = self.config.get('default_cryptos', [])
+        crypto_symbols = crypto_symbols_input if crypto_symbols_input is not None else self.collect_symbols("Enter cryptocurrency symbols separated by semicolon (;), or press Enter to use default cryptocurrencies: ") if self.crypto_enabled else []
+        combined_crypto_symbols = list(set(default_cryptos + crypto_symbols))
+        sorted_crypto_symbols = sorted(combined_crypto_symbols)
 
+        self._display_loop(sorted_stock_symbols, sorted_crypto_symbols)
+
+    def _display_stock_prices(self, symbols, now):
+        stock_prices = self.get_stock_prices(";".join(symbols))
+        print("\033[H\033[J", end="")  # Clear screen
+        print("Stock Prices as of " + now)
+        self.utils.print_table_with_fixed_width(stock_prices)
+
+    def _display_crypto_prices(self, symbols, now):
+        crypto_prices = self.get_crypto_prices(";".join(symbols))
+        if symbols:
+            print("\n" + "-" * 50 + "\n")
+        print("Cryptocurrency Prices as of " + now)
+        self.utils.print_table_with_fixed_width(crypto_prices, False)
+
+    def _display_loop(self, sorted_stock_symbols, sorted_crypto_symbols):
         while True:
             print("Refreshing...")
-            # Fetch and display stock prices
+            now = datetime.now().strftime('%Y-%m-%d')
+            
             if sorted_stock_symbols:
-                stock_prices = self.get_stock_prices(";".join(sorted_stock_symbols))
-                print("\033[H\033[J", end="")  # Clears the screen in many terminal environments
-                now = datetime.now().strftime('%Y-%m-%d')
-                print("Stock Prices as of " + now)
-                self.utils.print_table_with_fixed_width(stock_prices)
-
-            # Fetch and display cryptocurrency prices
+                self._display_stock_prices(sorted_stock_symbols, now)
+            
             if self.crypto_enabled and sorted_crypto_symbols:
-                crypto_prices = self.get_crypto_prices(";".join(sorted_crypto_symbols))
-                # If there were stock symbols, add a separation line for clarity
-                if sorted_stock_symbols:
-                    print("\n" + "-" * 50 + "\n")
-                print("Cryptocurrency Prices as of " + now)
-                self.utils.print_table_with_fixed_width(crypto_prices, False)
+                self._display_crypto_prices(sorted_crypto_symbols, now)
 
-            time.sleep(self.config.get('refresh_rate', 60))  # Default to 60 seconds
+            time.sleep(self.config.get('refresh_rate', 60))  # Refresh rate

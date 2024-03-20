@@ -102,6 +102,27 @@ class TestStocksManager(unittest.TestCase):
         result = stocks_manager.get_stock_prices('AAPL')
         self.assertTrue(any("Not available" in item for item in result))
 
+    @patch('builtins.input', side_effect=['AAPL;TSLA', ''])
+    def test_collect_symbols_with_input(self, mock_input):
+        stocks_manager = StocksManager(Config())
+        symbols = stocks_manager.collect_symbols("Enter stock symbols: ")
+        self.assertEqual(symbols, ['AAPL', 'TSLA'])
+
+    @patch('builtins.input', return_value='')
+    def test_collect_symbols_no_input(self, mock_input):
+        stocks_manager = StocksManager(Config())
+        symbols = stocks_manager.collect_symbols("Enter stock symbols: ")
+        self.assertEqual(symbols, [])
+
+    @patch('mstocks.stocks.StocksManager._display_loop')
+    @patch('mstocks.stocks.Config')
+    def test_display_prices_calls_display_loop(self, mock_config, mock_display_loop):
+        mock_config.return_value.get.return_value = []  # Ensure default_stocks and default_cryptos return empty lists
+        stocks_manager = StocksManager(mock_config.return_value)
+        mock_stock_symbols = ['AAPL', 'TSLA']
+        mock_crypto_symbols = ['BTC-USD', 'ETH-USD']
+        stocks_manager.display_prices(stock_symbols_input=mock_stock_symbols, crypto_symbols_input=mock_crypto_symbols)
+        mock_display_loop.assert_called_once_with(sorted(mock_stock_symbols), sorted(mock_crypto_symbols))
 
 if __name__ == '__main__':
     unittest.main()
