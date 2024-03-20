@@ -11,7 +11,7 @@ class StocksManager:
         self.utils = Utils()
         self.market = Market(self.utils)
         self.currency_map = config.get('currency_map', {"": "USD"})
-        self.crypto_enabled = config.get('crypto')
+        self.crypto_enabled = self.config.get('crypto', 'False').lower() == 'true'
 
     def get_stock_prices(self, symbols):
         prices = []
@@ -94,7 +94,6 @@ class StocksManager:
 
         
         if self.crypto_enabled:
-            print(self.crypto_enabled)
             # Prompt for cryptocurrency symbols
             default_cryptos = self.config.get('default_cryptos', [])
             crypto_input = input("Enter cryptocurrency symbols separated by semicolon (;), or press Enter to use default cryptocurrencies: ")
