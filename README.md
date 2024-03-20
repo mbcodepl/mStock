@@ -45,7 +45,7 @@ To stop the script, use the keyboard interrupt command, usually Ctrl+C or Ctrl+Z
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE.md file for details.
+This project is licensed under the MIT License. See the LICENSE.md file for details.
 
 ## Contributing
 
