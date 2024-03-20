@@ -12,7 +12,7 @@ class StocksManager:
         self.market = Market(self.utils)
         self.currency_map = config.get('currency_map', {"": "USD"})
         crypto_str = self.config.get('crypto', 'False')  # Default to 'False' if not found
-        crypto = True if crypto_str == "True" else False
+        self.crypto_enabled = True if crypto_str == "True" else False
 
     def get_stock_prices(self, symbols):
         prices = []
