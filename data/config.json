@@ -5,7 +5,7 @@
         "AAPL",
         "MSFT",
         "AI",
-        "AMZN"
+        "GOEV"
     ],
     "default_cryptos": [
         "BTC-USD",
@@ -14,5 +14,14 @@
     "currency_map": {
         ".WA": "PLN",
         "": "USD"
+    },
+    "investments": {
+        "GOEV": [
+            {
+                "buy_price": 3.54,
+                "buy_date": "2023-03-28",
+                "quantity": 8
+            }
+        ]
     }
 }

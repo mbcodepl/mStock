@@ -37,10 +37,15 @@ class StocksManager:
                 else:
                     last_close = hist['Close'].iloc[-1] if len(hist) == 1 else "Not available"
                     trend = "—"
+                currency = self.utils.get_currency(symbol, self.currency_map)
+                earnings, invested, percentage = self.calculate_earnings(symbol, last_close if isinstance(last_close, float) else 0)
+                earnings_str = f"{earnings:.2f} {currency}" if earnings is not None else "—"
+                invested_str = f"{invested:.2f} {currency}" if invested is not None else "—"
+                percentage_str = f"{percentage:.2f}%" if percentage is not None else "—"
 
                 market_status_symbol, last_refreshed_in_tz = self.market.is_market_open(symbol)
                 formatted_price = f"{last_close:.2f}  {currency}" if isinstance(last_close, float) else last_close
-                prices.append([market_status_symbol, last_refreshed_in_tz, f"[{symbol}]", f"{company_name}", formatted_price, trend])
+                prices.append([market_status_symbol, last_refreshed_in_tz, f"[{symbol}]", f"{company_name}", formatted_price, trend, invested_str, percentage_str, earnings_str])
             except IndexError:
                 current_time = datetime.now().strftime('%H:%M:%S')
                 prices.append(["Error", f"[{symbol}]", "N/A", "Not found", current_time, "—"])
@@ -75,7 +80,28 @@ class StocksManager:
                 prices.append(["Error", f"[{symbol}]", "N/A", "Not found", current_time, "—"])
 
         return prices
+    
+    def calculate_earnings(self, symbol, current_price):
+        investments = self.config.get('investments', {})
+        total_invested = 0.0
+        total_earnings = 0.0
+        percentage_earned = 0.0
 
+        if symbol in investments:
+            transactions = investments[symbol]
+            for transaction in transactions:
+                buy_price = transaction.get('buy_price')
+                quantity = transaction.get('quantity', 1)  # Default quantity to 1 if not specified
+                invested = buy_price * quantity
+                total_invested += invested
+                earnings = (current_price - buy_price) * quantity
+                total_earnings += earnings
+
+            # Avoid division by zero
+            if total_invested > 0:
+                percentage_earned = (total_earnings / total_invested) * 100
+
+        return total_earnings, total_invested, percentage_earned
 
     def _format_trend(self, price_change, percent_change, currency):
         if price_change > 0:

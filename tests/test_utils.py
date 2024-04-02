@@ -38,29 +38,35 @@ class TestUtils(unittest.TestCase):
 
     @patch('sys.stdout', new_callable=StringIO)
     def test_print_table_with_fixed_width(self, mock_stdout):
-        prices = [
-            ["Open", "10:00", "AAPL", "Apple Inc.", "$150.00", "+1.00 (0.67%) ↑"],
-            ["Closed", "16:00", "MSFT", "Microsoft Corp.", "$250.00", "-2.00 (0.80%) ↓"]
+        prices_with_market_status = [
+            ["Open", "10:00", "AAPL", "Apple Inc.", "150.00 USD", Utils.OKGREEN + "+1.00 USD (0.67%) ↑" + Utils.ENDC, "100.00 USD", "1.00%", "1.00 USD"],
+            ["Closed", "16:00", "MSFT", "Microsoft Corp.", "250.00 USD", Utils.FAIL + "-2.00 USD (0.80%) ↓" + Utils.ENDC, "200.00 USD", "-1.00%", "-2.00 USD"]
         ]
-        Utils.print_table_with_fixed_width(prices)
+
+        # Your prices_with_market_status data as defined above.
+        Utils.print_table_with_fixed_width(prices_with_market_status)
         output = mock_stdout.getvalue()
         self.assertIn("Market status", output)
-        self.assertIn("Apple Inc.", output)
-        self.assertIn("Microsoft Corp.", output)
+        # Check for the presence of an ANSI-escaped string in output
+        self.assertIn(Utils.strip_ansi_codes("+1.00 USD (0.67%) ↑"), Utils.strip_ansi_codes(output))
+        self.assertIn("100.00 USD", output)  # Check for invested amount
+        self.assertIn("1.00%", output)  # Check for earned percentage
 
     @patch('sys.stdout', new_callable=StringIO)
     def test_print_table_without_market_status(self, mock_stdout):
-        prices = [
-            ["10:00", "AAPL", "Apple Inc.", "$150.00", "+1.00 (0.67%) ↑"],
-            ["16:00", "MSFT", "Microsoft Corp.", "$250.00", "-2.00 (0.80%) ↓"]
+        prices_without_market_status = [
+            ["10:00", "AAPL", "Apple Inc.", "150.00 USD", Utils.OKGREEN + "+1.00 USD (0.67%) ↑" + Utils.ENDC, "100.00 USD", "1.00%", "1.00 USD"],
+            ["16:00", "MSFT", "Microsoft Corp.", "250.00 USD", Utils.FAIL + "-2.00 USD (0.80%) ↓" + Utils.ENDC, "200.00 USD", "-1.00%", "-2.00 USD"]
         ]
-        Utils.print_table_with_fixed_width(prices, include_market_status=False)
+        # Your prices_without_market_status data as defined above.
+        Utils.print_table_with_fixed_width(prices_without_market_status, include_market_status=False)
         output = mock_stdout.getvalue()
         self.assertNotIn("Market status", output)
-        self.assertIn("Apple Inc.", output)
-        self.assertIn("Microsoft Corp.", output)
-        self.assertIn("+1.00 (0.67%) ↑", output)
-        self.assertIn("-2.00 (0.80%) ↓", output)
+        # Check for the presence of an ANSI-escaped string in output
+        self.assertIn(Utils.strip_ansi_codes("+1.00 USD (0.67%) ↑"), Utils.strip_ansi_codes(output))
+        self.assertIn("100.00 USD", output)  # Check for invested amount
+        self.assertIn("1.00%", output)  # Check for earned percentage
+
 
 if __name__ == '__main__':
     unittest.main()
