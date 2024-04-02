@@ -16,11 +16,57 @@
         "": "USD"
     },
     "investments": {
+        "MSFT": [
+            {
+                "buy_price": 285.77,
+                "buy_date": "2023-04-21",
+                "quantity": 0.01959617
+            }
+        ],
+        "AI": [
+            {
+                "buy_price": 35.67,
+                "buy_date": "2023-06-28",
+                "quantity": 2
+            }
+        ],
         "GOEV": [
             {
                 "buy_price": 3.54,
-                "buy_date": "2023-03-28",
+                "buy_date": "2024-03-28",
                 "quantity": 8
+            }
+        ],
+        "AAPL": [
+            {
+                "buy_price": 167.51,
+                "buy_date": "2023-04-19",
+                "quantity": 0.59697928
+            },
+            {
+                "buy_price": 165.13,
+                "buy_date": "2023-04-21",
+                "quantity": 0.40302072
+            },
+            {
+                "buy_price": 175.09,
+                "buy_date": "2023-08-21",
+                "quantity": 0.99691587
+            },
+            {
+                "buy_price": 175.00,
+                "buy_date": "2023-08-21",
+                "quantity": 0.01
+            },
+            {
+                "buy_price": 175.33,
+                "buy_date": "2024-03-04",
+                "quantity": 1
+            },
+            {
+                "buy_price": 173.80,
+                "buy_date": "2024-03-14",
+                "quantity": 1
             }
         ]
     }

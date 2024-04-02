@@ -19,33 +19,30 @@ class StocksManager:
         for symbol in symbols.split(';'):
             symbol = symbol.strip()
             stock = yf.Ticker(symbol)
-            hist = stock.history(period="2d")  # Fetches the last 2 days data
+            hist = stock.history(period="2d")
             currency = self.utils.get_currency(symbol, self.currency_map)
 
             try:
-                # Fetch the company name
                 company_name = stock.info.get('longName', 'N/A')
-
                 if len(hist) > 1:
                     last_close = hist['Close'].iloc[-1]
                     prev_close = hist['Close'].iloc[-2]
-                    price_change = last_close - prev_close
+                    price_change = float(last_close - prev_close)
                     percent_change = (price_change / prev_close) * 100
 
-                    # Determine the price direction
-                    trend = self._format_trend(price_change, percent_change, currency)
+                    trend = Utils._format_value(price_change, currency, percent_change)
                 else:
                     last_close = hist['Close'].iloc[-1] if len(hist) == 1 else "Not available"
                     trend = "—"
-                currency = self.utils.get_currency(symbol, self.currency_map)
-                earnings, invested, percentage = self.calculate_earnings(symbol, last_close if isinstance(last_close, float) else 0)
-                earnings_str = f"{earnings:.2f} {currency}" if earnings is not None else "—"
+                
+                earnings, invested, _ = self.calculate_earnings(symbol, last_close if isinstance(last_close, float) else 0)
+                earnings_str = Utils._format_value(earnings, currency) if earnings is not None else "—"
                 invested_str = f"{invested:.2f} {currency}" if invested is not None else "—"
-                percentage_str = f"{percentage:.2f}%" if percentage is not None else "—"
 
                 market_status_symbol, last_refreshed_in_tz = self.market.is_market_open(symbol)
-                formatted_price = f"{last_close:.2f}  {currency}" if isinstance(last_close, float) else last_close
-                prices.append([market_status_symbol, last_refreshed_in_tz, f"[{symbol}]", f"{company_name}", formatted_price, trend, invested_str, percentage_str, earnings_str])
+                formatted_price = f"{last_close:.2f} {currency}" if isinstance(last_close, float) else last_close
+                
+                prices.append([market_status_symbol, last_refreshed_in_tz, f"[{symbol}]", company_name, formatted_price, trend, invested_str, earnings_str])
             except IndexError:
                 current_time = datetime.now().strftime('%H:%M:%S')
                 prices.append(["Error", f"[{symbol}]", "N/A", "Not found", current_time, "—"])
@@ -102,14 +99,6 @@ class StocksManager:
                 percentage_earned = (total_earnings / total_invested) * 100
 
         return total_earnings, total_invested, percentage_earned
-
-    def _format_trend(self, price_change, percent_change, currency):
-        if price_change > 0:
-            return f"{self.utils.GREEN}+{price_change:.2f} {currency} ({percent_change:.2f}%) ↑{self.utils.RESET}"
-        elif price_change < 0:
-            return f"{self.utils.RED}{price_change:.2f} {currency} ({abs(percent_change):.2f}%) ↓{self.utils.RESET}"
-        else:
-            return f"{price_change:.2f} {currency} ({percent_change:.2f}%)"
         
     def collect_symbols(self, text):
         inpt = input(text)
@@ -130,7 +119,6 @@ class StocksManager:
 
     def _display_stock_prices(self, symbols, now):
         stock_prices = self.get_stock_prices(";".join(symbols))
-        print("\033[H\033[J", end="")  # Clear screen
         print("Stock Prices as of " + now)
         self.utils.print_table_with_fixed_width(stock_prices)
 
@@ -144,8 +132,8 @@ class StocksManager:
     def _display_loop(self, sorted_stock_symbols, sorted_crypto_symbols):
         while True:
             print("Refreshing...")
-            now = datetime.now().strftime('%Y-%m-%d')
-            
+            now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            print("\033[H\033[J", end="")  # Clear screen
             if sorted_stock_symbols:
                 self._display_stock_prices(sorted_stock_symbols, now)
             
