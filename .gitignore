@@ -3,3 +3,4 @@ __pycache__/
 mstocs/__pycache__/
 .coverage
 coverage.json
+data/config.json
