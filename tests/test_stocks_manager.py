@@ -124,5 +124,65 @@ class TestStocksManager(unittest.TestCase):
         stocks_manager.display_prices(stock_symbols_input=mock_stock_symbols, crypto_symbols_input=mock_crypto_symbols)
         mock_display_loop.assert_called_once_with(sorted(mock_stock_symbols), sorted(mock_crypto_symbols))
 
+    def setUp(self):
+        # Mock configuration
+        self.config = {
+            'investments': {
+                'AAPL': [
+                    {'buy_price': 100, 'quantity': 0.5},
+                    {'buy_price': 105, 'quantity': 0.3},
+                ],
+                'MSFT': [
+                    {'buy_price': 200, 'quantity': 1},
+                ],
+            }
+        }
+        # Create instance of StocksManager
+        self.stocks_manager = StocksManager(self.config)
+
+    def test_calculate_earnings_positive(self):
+        symbol = 'AAPL'
+        current_price = 150
+        # Call the method
+        earnings, invested, percentage = self.stocks_manager.calculate_earnings(symbol, current_price)
+        # Check the results
+        self.assertEqual(earnings, ((150 - 100) * 0.5) + ((150 - 105) * 0.3))
+        self.assertEqual(invested, (100 * 0.5) + (105 * 0.3))
+        self.assertTrue(percentage > 0)  # Earnings should be positive
+
+    def test_calculate_earnings_negative(self):
+        symbol = 'MSFT'
+        current_price = 190
+        # Call the method
+        earnings, invested, percentage = self.stocks_manager.calculate_earnings(symbol, current_price)
+        # Check the results
+        self.assertEqual(earnings, (190 - 200) * 1)
+        self.assertEqual(invested, 200 * 1)
+        self.assertTrue(percentage < 0)  # Earnings should be negative
+
+    def test_calculate_earnings_no_investment(self):
+        symbol = 'GOOG'  # Assuming GOOG is not in the investments
+        current_price = 1000
+        # Call the method
+        earnings, invested, percentage = self.stocks_manager.calculate_earnings(symbol, current_price)
+        # Check the results
+        self.assertEqual(earnings, 0)
+        self.assertEqual(invested, 0)
+        self.assertEqual(percentage, 0)
+
+    def test_calculate_earnings_zero_invested(self):
+        symbol = 'AAPL'
+        current_price = 100  # No change in price hence no earnings
+        # Modify the investments to simulate zero invested scenario
+        self.stocks_manager.config['investments'][symbol] = [
+            {'buy_price': 100, 'quantity': 0}
+        ]
+        # Call the method
+        earnings, invested, percentage = self.stocks_manager.calculate_earnings(symbol, current_price)
+        # Check the results
+        self.assertEqual(earnings, 0)
+        self.assertEqual(invested, 0)
+        self.assertEqual(percentage, 0)
+
 if __name__ == '__main__':
     unittest.main()
