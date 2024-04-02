@@ -44,8 +44,8 @@ class TestUtils(unittest.TestCase):
         ]
 
         # Your prices_with_market_status data as defined above.
-        Utils.print_table_with_fixed_width(prices_with_market_status)
-        output = mock_stdout.getvalue()
+        Utils.print_table_with_fixed_width(prices_with_market_status) 
+        output = Utils.strip_ansi_codes(mock_stdout.getvalue())
         self.assertIn("Market status", output)
         # Check for the presence of an ANSI-escaped string in output
         self.assertIn(Utils.strip_ansi_codes("+1.00 USD (0.67%) ↑"), Utils.strip_ansi_codes(output))

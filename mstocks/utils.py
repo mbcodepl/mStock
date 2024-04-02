@@ -33,20 +33,25 @@ class Utils:
         # Define colors for positive and negative earnings
         POSITIVE_EARNINGS = Utils.OKGREEN
         NEGATIVE_EARNINGS = Utils.FAIL
-        # Adjust headers based on whether to include market status
-        headers = ['-', 'Hour', 'Symbol', 'Name', 'Price', 'Trend', 'Invested', 'Earnings'] if include_market_status else ['Hour', 'Symbol', 'Name', 'Price', 'Trend', 'Invested', 'Earnings']
         
+        # Adjust headers based on whether to include market status
+        if include_market_status:
+            headers = ['Market status', 'Hour', 'Symbol', 'Name', 'Price', 'Trend', 'Invested', 'Earnings']
+        else:
+            headers = ['Hour', 'Symbol', 'Name', 'Price', 'Trend', 'Invested', 'Earnings']
         # Strip extra spaces from the headers
         headers = [header.strip() for header in headers]
 
         max_widths = [0] * len(headers)
         for row in prices:
             for i, item in enumerate(row):
+                if i >= len(headers):  # Ensure we do not exceed the header count
+                    break  # Skip any extra items in the row beyond the number of headers
                 length = len(Utils.strip_ansi_codes(str(item)))
                 if length > max_widths[i]:
                     max_widths[i] = length
 
-        # Include headers in the max_widths calculation
+        # Now ensure that max_widths accommodates the headers as well
         for i, header in enumerate(headers):
             length = len(header)
             if length > max_widths[i]:
@@ -64,6 +69,8 @@ class Utils:
         for row in prices:
             formatted_row = []
             for i, item in enumerate(row):
+                if i >= len(headers):  # Ensure we do not exceed the header count
+                    break  # Skip any extra items in the row beyond the number of headers
                 item_str = str(item)
 
                 # Apply color coding to Trend column (assuming it's the second to last column)
@@ -86,7 +93,8 @@ class Utils:
                 formatted_row.append(item_str)
 
             # Print the row with the dynamic format string
-            print(format_str.format(*formatted_row))
+            # Use list slicing to ensure the row length matches header count
+            print(format_str.format(*formatted_row[:len(headers)]))
 
     @staticmethod
     def _format_value(value, currency, percent_change=None):

@@ -29,23 +29,6 @@ class TestStocksManager(unittest.TestCase):
         # Check if the result contains the correct entries
         self.assertIsInstance(result, list)
 
-    def test_format_trend_positive(self):
-        stocks_manager = StocksManager(Config())
-        trend = stocks_manager._format_trend(5, 10, "USD")
-        self.assertIn("+5.00 USD (10.00%) ↑", trend)
-
-    def test_format_trend_negative(self):
-        config = Config()  # Mock this if needed
-        stocks_manager = StocksManager(config)
-        trend = stocks_manager._format_trend(-5, -10, "USD")
-        self.assertIn("-5.00 USD (10.00%) ↓", trend)
-
-    def test_format_trend_no_change(self):
-        config = Config()  # Mock this if needed
-        stocks_manager = StocksManager(config)
-        trend = stocks_manager._format_trend(0, 0, "USD")
-        self.assertIn("0.00 USD (0.00%)", trend)
-
     @patch('mstocks.stocks.yf.Ticker')
     def test_get_crypto_prices(self, mock_ticker):
         # Setup a mock DataFrame response

@@ -64,7 +64,7 @@ class StocksManager:
                     percent_change = (price_change / prev_close) * 100
 
                     # Determine the price direction
-                    trend = self._format_trend(price_change, percent_change, "USD")
+                    trend = Utils._format_value(price_change, "USD", percent_change)
                 else:
                     last_close = hist['Close'].iloc[-1] if len(hist) == 1 else "Not available"
                     trend = "—"
