@@ -13,5 +13,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the content of the local src directory to the working directory
 COPY . .
 
-# Command to run the application
-CMD ["python3", "main.py"]
+# Command to run the application in silent mode by default
+CMD ["python3", "main.py", "--silent"]

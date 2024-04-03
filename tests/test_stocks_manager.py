@@ -99,6 +99,14 @@ class TestStocksManager(unittest.TestCase):
 
     @patch('mstocks.stocks.StocksManager._display_loop')
     @patch('mstocks.stocks.Config')
+    def test_run_silent(self, mock_config, mock_display_loop):
+        mock_config.return_value.get.return_value = []
+        stocks_manager = StocksManager(mock_config.return_value)
+        stocks_manager.run_silent()
+        mock_display_loop.assert_called_once_with(sorted([]), sorted([]))
+        
+    @patch('mstocks.stocks.StocksManager._display_loop')
+    @patch('mstocks.stocks.Config')
     def test_run_calls_display_loop(self, mock_config, mock_display_loop):
         mock_config.return_value.get.return_value = []  # Ensure default_stocks and default_cryptos return empty lists
         stocks_manager = StocksManager(mock_config.return_value)
