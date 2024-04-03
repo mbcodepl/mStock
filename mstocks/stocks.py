@@ -104,7 +104,7 @@ class StocksManager:
         inpt = input(text)
         return inpt.split(';') if inpt.strip() else []
     
-    def display_prices(self, stock_symbols_input=None, crypto_symbols_input=None):
+    def run(self, stock_symbols_input=None, crypto_symbols_input=None):
         default_stocks = self.config.get('default_stocks', [])
         stock_symbols = stock_symbols_input if stock_symbols_input is not None else self.collect_symbols("Enter stock symbols separated by semicolon (;), or press Enter to use default stocks: ")
         combined_stock_symbols = list(set(default_stocks + stock_symbols))
@@ -114,6 +114,15 @@ class StocksManager:
         crypto_symbols = crypto_symbols_input if crypto_symbols_input is not None else self.collect_symbols("Enter cryptocurrency symbols separated by semicolon (;), or press Enter to use default cryptocurrencies: ") if self.crypto_enabled else []
         combined_crypto_symbols = list(set(default_cryptos + crypto_symbols))
         sorted_crypto_symbols = sorted(combined_crypto_symbols)
+
+        self._display_loop(sorted_stock_symbols, sorted_crypto_symbols)
+    
+    def run_silent(self):
+        default_stocks = self.config.get('default_stocks', [])
+        sorted_stock_symbols = sorted(default_stocks)
+
+        default_cryptos = self.config.get('default_cryptos', [])
+        sorted_crypto_symbols = sorted(default_cryptos)
 
         self._display_loop(sorted_stock_symbols, sorted_crypto_symbols)
 

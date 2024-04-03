@@ -99,12 +99,12 @@ class TestStocksManager(unittest.TestCase):
 
     @patch('mstocks.stocks.StocksManager._display_loop')
     @patch('mstocks.stocks.Config')
-    def test_display_prices_calls_display_loop(self, mock_config, mock_display_loop):
+    def test_run_calls_display_loop(self, mock_config, mock_display_loop):
         mock_config.return_value.get.return_value = []  # Ensure default_stocks and default_cryptos return empty lists
         stocks_manager = StocksManager(mock_config.return_value)
         mock_stock_symbols = ['AAPL', 'TSLA']
         mock_crypto_symbols = ['BTC-USD', 'ETH-USD']
-        stocks_manager.display_prices(stock_symbols_input=mock_stock_symbols, crypto_symbols_input=mock_crypto_symbols)
+        stocks_manager.run(stock_symbols_input=mock_stock_symbols, crypto_symbols_input=mock_crypto_symbols)
         mock_display_loop.assert_called_once_with(sorted(mock_stock_symbols), sorted(mock_crypto_symbols))
 
     def setUp(self):
