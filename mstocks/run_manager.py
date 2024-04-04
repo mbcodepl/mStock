@@ -41,7 +41,7 @@ class RunManager:
             now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             print("\033[H\033[J", end="")  # Clear screen
             if sorted_stock_symbols:
-                self.stocks_manager._d(sorted_stock_symbols, now)
+                self.stocks_manager._display_stock_prices(sorted_stock_symbols, now)
             
             if self.crypto_enabled and sorted_crypto_symbols:
                 self.crypto_manager._display_crypto_prices(sorted_crypto_symbols, now)
