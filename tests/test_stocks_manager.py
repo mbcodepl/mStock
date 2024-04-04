@@ -79,8 +79,8 @@ class TestStocksManager(unittest.TestCase):
         # Call the method
         earnings, invested, percentage, buy_price = self.stocks_manager.calculate_earnings(symbol, current_price)
         # Check the results
-        self.assertEqual(earnings, ((150 - 100) * 0.5) + ((150 - 105) * 0.3))
-        self.assertEqual(invested, (100 * 0.5) + (105 * 0.3))
+        self.assertEqual(earnings, ((current_price - 100) * 0.5) + ((current_price - 105) * 0.3))
+        self.assertEqual(invested, ((100 * 0.5) + 0.95) + ((105 * 0.3) + 0))  # Added the fees
         self.assertTrue(percentage > 0)  # Earnings should be positive
         self.assertEqual(buy_price, 105)
 
@@ -90,8 +90,8 @@ class TestStocksManager(unittest.TestCase):
         # Call the method
         earnings, invested, percentage, buy_price = self.stocks_manager.calculate_earnings(symbol, current_price)
         # Check the results
-        self.assertEqual(earnings, (190 - 200) * 1)
-        self.assertEqual(invested, 200 * 1)
+        self.assertEqual(earnings, (current_price - 200) * 1)
+        self.assertEqual(invested, (200 * 1) + 0.95)  # Added the fee
         self.assertTrue(percentage < 0)  # Earnings should be negative
         self.assertEqual(buy_price, 200)
 

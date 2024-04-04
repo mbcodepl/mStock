@@ -11,7 +11,7 @@ class StocksManager:
         self.utils = Utils()
         self.market = Market(self.utils)
         self.currency_map = config.get('currency_map', {"": "USD"})
-
+        
     def get_stock_prices(self, symbols):
         prices = []
         for symbol in symbols.split(';'):
@@ -48,7 +48,7 @@ class StocksManager:
         return prices
     
     def calculate_earnings(self, symbol, current_price):
-        investments = self.config.get('investments', {})
+        investments = self.config.get('investments', {}).get("stocks", {})
         total_invested = 0.0
         total_earnings = 0.0
         percentage_earned = 0.0

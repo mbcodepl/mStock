@@ -42,3 +42,54 @@ class TestCryptoManager(unittest.TestCase):
         # Adjust your assertions as necessary. The following is a placeholder.
         # For example, check if "BTC-USD" or "51000.00 USD" appears in any of the strings in the result list.
         self.assertTrue(any("BTC-USD" in item for item in result[0]), "BTC-USD should be in the results")
+
+    def setUp(self):
+        self.crypto = CryptoManager()
+
+    @patch('mstocks.crypto.requests.get')
+    def test_convert_to_pln(self, mock_get):
+        # Mock the response from the API
+        mock_response = {
+            'rates': {
+                'PLN': 4.0
+            }
+        }
+        mock_get.return_value.json.return_value = mock_response
+
+        # Test with a USD price of 10
+        usd_price = 10
+        expected_pln_price = 40
+        actual_pln_price = self.crypto.convert_to_pln(usd_price)
+        self.assertEqual(actual_pln_price, expected_pln_price)
+
+    @patch('mstocks.crypto.requests.get')
+    def test_convert_to_pln_zero_usd_price(self, mock_get):
+        # Mock the response from the API
+        mock_response = {
+            'rates': {
+                'PLN': 4.0
+            }
+        }
+        mock_get.return_value.json.return_value = mock_response
+
+        # Test with a USD price of 0
+        usd_price = 0
+        expected_pln_price = 0
+        actual_pln_price = self.crypto.convert_to_pln(usd_price)
+        self.assertEqual(actual_pln_price, expected_pln_price)
+
+    @patch('mstocks.crypto.requests.get')
+    def test_convert_to_pln_negative_usd_price(self, mock_get):
+        # Mock the response from the API
+        mock_response = {
+            'rates': {
+                'PLN': 4.0
+            }
+        }
+        mock_get.return_value.json.return_value = mock_response
+
+        # Test with a negative USD price
+        usd_price = -10
+        expected_pln_price = -40
+        actual_pln_price = self.crypto.convert_to_pln(usd_price)
+        self.assertEqual(actual_pln_price, expected_pln_price)
