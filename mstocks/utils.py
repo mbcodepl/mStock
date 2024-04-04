@@ -36,9 +36,9 @@ class Utils:
         
         # Adjust headers based on whether to include market status
         if include_market_status:
-            headers = ['Market status', 'Hour', 'Symbol', 'Name', 'Price', 'Trend', 'Invested', 'Earnings']
+            headers = ['Market status', 'Symbol', 'Name', 'Price', 'Trend', 'Invested', 'Earnings']
         else:
-            headers = ['Hour', 'Symbol', 'Name', 'Price', 'Trend', 'Invested', 'Earnings']
+            headers = ['Symbol', 'Name', 'Price', 'Trend', 'Invested', 'Earnings']
         # Strip extra spaces from the headers
         headers = [header.strip() for header in headers]
 
@@ -126,4 +126,8 @@ class Utils:
         formatted_str += f"{Utils.RESET}" if color else ""
         
         return formatted_str    
-
+    
+    @staticmethod
+    def _collect_symbols(text):
+        inpt = input(text)
+        return inpt.split(';') if inpt.strip() else []

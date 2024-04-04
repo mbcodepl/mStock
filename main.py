@@ -1,7 +1,7 @@
 import argparse
 import sys
 from mstocks.config import Config
-from mstocks.stocks import StocksManager
+from mstocks.run_manager import RunManager
 
 def main():
     # Set up argument parsing
@@ -17,13 +17,13 @@ def main():
     config = Config()
 
     # Create a StocksManager instance
-    stocks_manager = StocksManager(config)
+    runner = RunManager(config)
 
     # Decide which method to call based on silent_mode
     if args.silent:  # Directly using args.silent as it's already a boolean
-        stocks_manager.run_silent()
+        runner.run_silent()
     else:
-        stocks_manager.run()
+        runner.run()
 
 if __name__ == "__main__":
     main()

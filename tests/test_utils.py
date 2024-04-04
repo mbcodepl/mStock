@@ -50,7 +50,9 @@ class TestUtils(unittest.TestCase):
         # Check for the presence of an ANSI-escaped string in output
         self.assertIn(Utils.strip_ansi_codes("+1.00 USD (0.67%) ↑"), Utils.strip_ansi_codes(output))
         self.assertIn("100.00 USD", output)  # Check for invested amount
-        self.assertIn("1.00%", output)  # Check for earned percentage
+        self.assertIn("+1.00 USD (0.67%) ↑", output)  # For the positive change
+        self.assertIn("-2.00 USD (0.80%) ↓", output)  # For the negative change
+
 
     @patch('sys.stdout', new_callable=StringIO)
     def test_print_table_without_market_status(self, mock_stdout):
@@ -63,9 +65,8 @@ class TestUtils(unittest.TestCase):
         output = mock_stdout.getvalue()
         self.assertNotIn("Market status", output)
         # Check for the presence of an ANSI-escaped string in output
-        self.assertIn(Utils.strip_ansi_codes("+1.00 USD (0.67%) ↑"), Utils.strip_ansi_codes(output))
         self.assertIn("100.00 USD", output)  # Check for invested amount
-        self.assertIn("1.00%", output)  # Check for earned percentage
+        self.assertIn(Utils.strip_ansi_codes("+1.00 USD (0.67%) ↑"), output) 
 
 
 if __name__ == '__main__':
