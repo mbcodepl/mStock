@@ -16,17 +16,56 @@ pip install -r requiremnts.txt
 
 ## Configuration
 
-Before using the script, set up the config.json file with your preferred settings. Here's a template for config.json:
+The application uses a JSON configuration file. Here is a sample configuration:
 
 ```json
 {
-  "refresh_rate": 10,
-  "default_stocks":["AAPL", "MSFT", "CDR.WA", "PKN.WA"],
-  "currency_map": {
+  "refresh_rate": 10,  // The rate at which the stock prices are refreshed
+  "crypto": "False",  // Set to "True" if you want to fetch crypto prices
+  "default_stocks": [  // The default stocks to fetch if no input is provided by the user
+    "AAPL",
+    "MSFT",
+  ],
+  "default_cryptos": [ // The default cryptos to fetch if no input is provided by the user
+    "BTC-USD",
+    "ETH-USD"
+  ],
+  "currency_map": { // Mapping of currency symbols to their full names
     ".WA": "PLN",
-    "": "USD" // Assuming empty means it's a US stock
-    }
+    "": "USD"
+  },
+  "investments": { // Your investments in different stocks
+    "MSFT": [
+      {
+        "buy_price": 285.77,
+        "buy_date": "2023-04-21",
+        "quantity": 0.01959617,
+        "fee": 0.95
+      }
+    ],
+    "AAPL": [
+      {
+        "buy_price": 167.51,
+        "buy_date": "2023-04-19",
+        "quantity": 0.59697928,
+        "fee": 0
+      },
+      {
+        "buy_price": 165.13,
+        "buy_date": "2023-04-21",
+        "quantity": 0.40302072,
+        "fee": 0.95
+      },
+    ]
+  }
 }
+```
+## Running Tests
+
+To run the tests for this project, you can use the `unittest` module in Python. We also use `coverage` to measure the code coverage of our tests. You can run the tests with the following command:
+
+```bash
+coverage run -m unittest discover -s tests
 ```
 
 ## Usage
