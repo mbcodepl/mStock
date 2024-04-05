@@ -61,13 +61,15 @@ class TestStocksManager(unittest.TestCase):
         # Mock configuration
         self.config = {
             'investments': {
-                'AAPL': [
-                    {'buy_price': 100, 'quantity': 0.5},
-                    {'buy_price': 105, 'quantity': 0.3},
-                ],
-                'MSFT': [
-                    {'buy_price': 200, 'quantity': 1},
-                ],
+                'stocks': {
+                    'AAPL': [
+                        {'buy_price': 100, 'quantity': 0.5, 'fee': 0.95},
+                        {'buy_price': 105, 'quantity': 0.3, 'fee': 0},
+                    ],
+                    'MSFT': [
+                        {'buy_price': 200, 'quantity': 1, 'fee': 0.95},
+                    ],
+                }
             }
         }
         # Create instance of StocksManager
@@ -82,6 +84,7 @@ class TestStocksManager(unittest.TestCase):
         self.assertEqual(earnings, ((current_price - 100) * 0.5) + ((current_price - 105) * 0.3))
         self.assertEqual(invested, ((100 * 0.5) + 0.95) + ((105 * 0.3) + 0))  # Added the fees
         self.assertTrue(percentage > 0)  # Earnings should be positive
+        self.assertEqual(earnings, 38.5)
         self.assertEqual(buy_price, 105)
 
     def test_calculate_earnings_negative(self):

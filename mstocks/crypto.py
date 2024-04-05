@@ -31,7 +31,7 @@ class CryptoManager:
                     # Determine the price direction
                     trend = Utils._format_value(price_change, "PLN", percent_change)
                 else:
-                    last_close = hist['Close'].iloc[-1] if len(hist) == 1 else "Not available"
+                    last_close = hist['Close'].iloc[-1] if len(hist) == 1 else 0
                     trend = "—"
 
                 # Convert USD price to PLN

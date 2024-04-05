@@ -6,11 +6,15 @@ from mstocks.config import Config
 from mstocks.crypto import CryptoManager
 
 class TestCryptoManager(unittest.TestCase):
+    
+    def setUp(self):
+        self.crypto_manager = CryptoManager(Config())
+
     @patch('mstocks.stocks.yf.Ticker')
     def test_empty_symbol_string_for_crypto(self, mock_ticker):
         # Assuming your StocksManager is initialized here
         stocks_manager = CryptoManager(Config())
-        result = stocks_manager.get_crypto_prices('')
+        result = stocks_manager.get_crypto_prices('BTC-USD')
         expected_result = [['\x1b[91m●\x1b[0m', any, '[]', 'Crypto', 'Not available', '—']]
         self.assertEqual(len(result), len(expected_result))
 
@@ -43,53 +47,68 @@ class TestCryptoManager(unittest.TestCase):
         # For example, check if "BTC-USD" or "51000.00 USD" appears in any of the strings in the result list.
         self.assertTrue(any("BTC-USD" in item for item in result[0]), "BTC-USD should be in the results")
 
-    def setUp(self):
-        self.crypto = CryptoManager()
+    def test_calculate_earnings_no_investments(self):
+        symbol = "BTC"
+        current_price = 50000
 
-    @patch('mstocks.crypto.requests.get')
-    def test_convert_to_pln(self, mock_get):
-        # Mock the response from the API
-        mock_response = {
-            'rates': {
-                'PLN': 4.0
+        earnings, invested, percentage, buy_price = self.crypto_manager.calculate_earnings(symbol, current_price)
+
+        self.assertEqual(earnings, 0)
+        self.assertEqual(invested, 0)
+        self.assertEqual(percentage, 0)
+        self.assertEqual(buy_price, 0)
+
+    def test_calculate_earnings_single_investment(self):
+        symbol = "BTC"
+        current_price = 50000
+
+        self.crypto_manager.config = {
+            'investments': {
+                'cryptos': {
+                    'BTC': [
+                        {
+                            'buy_price': 40000,
+                            'quantity': 2,
+                            'fee': 10
+                        }
+                    ]
+                }
             }
         }
-        mock_get.return_value.json.return_value = mock_response
 
-        # Test with a USD price of 10
-        usd_price = 10
-        expected_pln_price = 40
-        actual_pln_price = self.crypto.convert_to_pln(usd_price)
-        self.assertEqual(actual_pln_price, expected_pln_price)
+        earnings, invested, percentage, buy_price = self.crypto_manager.calculate_earnings(symbol, current_price)
 
-    @patch('mstocks.crypto.requests.get')
-    def test_convert_to_pln_zero_usd_price(self, mock_get):
-        # Mock the response from the API
-        mock_response = {
-            'rates': {
-                'PLN': 4.0
+        self.assertEqual(earnings, 20000)
+        self.assertEqual(invested, 80010)
+        self.assertTrue(percentage > 0)
+        self.assertEqual(buy_price, 40000)
+
+    def test_calculate_earnings_multiple_investments(self):
+        symbol = "BTC"
+        current_price = 50000
+
+        self.crypto_manager.config = {
+            'investments': {
+                'cryptos': {
+                    'BTC': [
+                        {
+                            'buy_price': 40000,
+                            'quantity': 2,
+                            'fee': 10
+                        },
+                        {
+                            'buy_price': 45000,
+                            'quantity': 1,
+                            'fee': 5
+                        }
+                    ]
+                }
             }
         }
-        mock_get.return_value.json.return_value = mock_response
 
-        # Test with a USD price of 0
-        usd_price = 0
-        expected_pln_price = 0
-        actual_pln_price = self.crypto.convert_to_pln(usd_price)
-        self.assertEqual(actual_pln_price, expected_pln_price)
+        earnings, invested, percentage, buy_price = self.crypto_manager.calculate_earnings(symbol, current_price)
 
-    @patch('mstocks.crypto.requests.get')
-    def test_convert_to_pln_negative_usd_price(self, mock_get):
-        # Mock the response from the API
-        mock_response = {
-            'rates': {
-                'PLN': 4.0
-            }
-        }
-        mock_get.return_value.json.return_value = mock_response
-
-        # Test with a negative USD price
-        usd_price = -10
-        expected_pln_price = -40
-        actual_pln_price = self.crypto.convert_to_pln(usd_price)
-        self.assertEqual(actual_pln_price, expected_pln_price)
+        self.assertEqual(earnings, 25000)
+        self.assertEqual(invested, 125015)
+        self.assertTrue(percentage > 0)
+        self.assertEqual(buy_price, 45000)
