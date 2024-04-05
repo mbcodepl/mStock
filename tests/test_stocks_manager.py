@@ -120,5 +120,27 @@ class TestStocksManager(unittest.TestCase):
         self.assertEqual(percentage, 0)
         self.assertEqual(buy_price, 0)
 
-if __name__ == '__main__':
-    unittest.main()
+    @patch('mstocks.stocks.yf.Ticker')
+    @patch('mstocks.stocks.Config')
+    def test_correct_json_structure(self, mock_config, mock_ticker):
+        # Mocking responses
+        mock_stock_instance = mock_ticker.return_value
+        mock_stock_instance.history.return_value = MagicMock(Close={'2022-03-08': 150, '2022-03-09': 155})
+        mock_stock_instance.info.return_value = {'longName': 'Test Company'}
+
+        stocks_manager = StocksManager(mock_config.return_value)
+        result = stocks_manager.get_stock_prices_json('AAPL')
+        # We expect the result to be a list of dictionaries with specific keys
+        self.assertIsInstance(result, list)
+        self.assertIsInstance(result[0], dict)
+        expected_keys = ["symbol", "company_name", "last_close_price", "trend", "invested", "earnings"]
+        self.assertTrue(all(key in result[0] for key in expected_keys))
+
+    @patch('mstocks.stocks.yf.Ticker')
+    def test_incorrect_symbol_handling(self, mock_ticker):
+        # Assuming an incorrect symbol returns an empty or specific 'info' response
+        mock_stock_instance = mock_ticker.return_value
+        mock_stock_instance.info.return_value = {}
+        stocks_manager = StocksManager(Config())
+        result = stocks_manager.get_stock_prices_json('WRONGSYMBOL')
+        self.assertTrue('error' in result[0])

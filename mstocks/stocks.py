@@ -11,7 +11,10 @@ class StocksManager:
         self.utils = Utils()
         self.market = Market(self.utils)
         self.currency_map = config.get('currency_map', {"": "USD"})
-        
+
+
+    # This method fetches the stock prices for the given symbols
+    # it returns a list of lists containing the stock prices in formatted way to be displayed in table for console
     def get_stock_prices(self, symbols):
         prices = []
         for symbol in symbols.split(';'):
@@ -46,6 +49,71 @@ class StocksManager:
                 prices.append(["Error", f"[{symbol}]", "N/A", "Not found", current_time, "—"])
 
         return prices
+    
+    # Thisn method fetches the stock prices for the given symbols
+    # it returns a list of lists containing the stock prices in array format
+    def get_stock_prices_json(self, symbols):
+        prices = []
+        for symbol in symbols.split(';'):
+            try:
+                symbol = symbol.strip()
+                stock = yf.Ticker(symbol)
+                hist = stock.history(period="2d")
+                currency = self.utils.get_currency(symbol, self.currency_map)
+
+                try:
+                    company_name = stock.info.get('longName', 'N/A')
+                    if len(hist) > 1:
+                        last_close = hist['Close'].iloc[-1]
+                        prev_close = hist['Close'].iloc[-2]
+                        price_change = float(last_close - prev_close)
+                        percent_change = (price_change / prev_close) * 100
+
+                        trend = {
+                            "price_change": price_change,
+                            "currency": currency,
+                            "percent_change": percent_change
+                        }
+                    else:
+                        last_close = hist['Close'].iloc[-1] if len(hist) == 1 else "Not available"
+                        trend = "—"
+
+                    earnings, invested, percent_earned, buy_price = self.calculate_earnings(
+                        symbol, last_close if isinstance(last_close, float) else 0
+                    )
+                    earnings_info = {
+                        "earnings": earnings,
+                        "currency": currency,
+                        "percent_earned": percent_earned
+                    } if earnings is not None else "—"
+                    invested_info = {
+                        "invested": f"{invested:.2f}",
+                        "currency": currency,
+                        "buy_price": f"{buy_price:.2f}"
+                    } if invested is not None else "—"
+
+                    formatted_price = f"{last_close:.2f} {currency}" if isinstance(last_close, float) else last_close
+
+                    prices.append({
+                        "symbol": symbol,
+                        "company_name": company_name,
+                        "last_close_price": formatted_price,
+                        "trend": trend,
+                        "invested": invested_info,
+                        "earnings": earnings_info
+                    })
+                except IndexError:
+                    current_time = datetime.now().strftime('%H:%M:%S')
+                    prices.append({
+                        "error": "Data not found",
+                        "symbol": symbol,
+                        "time_checked": current_time
+                    })
+            except ValueError:
+                prices.append({"error": "Data not found", "symbol": symbol})
+                
+        return prices
+
     
     def calculate_earnings(self, symbol, current_price):
         investments = self.config.get('investments', {}).get("stocks", {})
