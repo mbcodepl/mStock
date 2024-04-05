@@ -138,9 +138,7 @@ class TestStocksManager(unittest.TestCase):
 
     @patch('mstocks.stocks.yf.Ticker')
     def test_incorrect_symbol_handling(self, mock_ticker):
-        # Assuming an incorrect symbol returns an empty or specific 'info' response
-        mock_stock_instance = mock_ticker.return_value
-        mock_stock_instance.info.return_value = {}
+        mock_ticker.side_effect = ValueError("Invalid symbol")
         stocks_manager = StocksManager(Config())
-        result = stocks_manager.get_stock_prices_json('WRONGSYMBOL')
-        self.assertTrue('error' in result[0])
+        result = stocks_manager.get_stock_prices_json('INVALID')
+        self.assertTrue(any("Error" in item for item in result))

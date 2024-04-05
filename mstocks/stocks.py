@@ -55,62 +55,58 @@ class StocksManager:
     def get_stock_prices_json(self, symbols):
         prices = []
         for symbol in symbols.split(';'):
+            symbol = symbol.strip()
             try:
-                symbol = symbol.strip()
                 stock = yf.Ticker(symbol)
                 hist = stock.history(period="2d")
                 currency = self.utils.get_currency(symbol, self.currency_map)
 
-                try:
-                    company_name = stock.info.get('longName', 'N/A')
-                    if len(hist) > 1:
-                        last_close = hist['Close'].iloc[-1]
-                        prev_close = hist['Close'].iloc[-2]
-                        price_change = float(last_close - prev_close)
-                        percent_change = (price_change / prev_close) * 100
+                company_name = stock.info.get('longName', 'N/A')
+                if len(hist) > 1:
+                    last_close = hist['Close'].iloc[-1]
+                    prev_close = hist['Close'].iloc[-2]
+                    price_change = float(last_close - prev_close)
+                    percent_change = (price_change / prev_close) * 100
 
-                        trend = {
-                            "price_change": price_change,
-                            "currency": currency,
-                            "percent_change": percent_change
-                        }
-                    else:
-                        last_close = hist['Close'].iloc[-1] if len(hist) == 1 else "Not available"
-                        trend = "—"
-
-                    earnings, invested, percent_earned, buy_price = self.calculate_earnings(
-                        symbol, last_close if isinstance(last_close, float) else 0
-                    )
-                    earnings_info = {
-                        "earnings": earnings,
+                    trend = {
+                        "price_change": price_change,
                         "currency": currency,
-                        "percent_earned": percent_earned
-                    } if earnings is not None else "—"
-                    invested_info = {
-                        "invested": f"{invested:.2f}",
-                        "currency": currency,
-                        "buy_price": f"{buy_price:.2f}"
-                    } if invested is not None else "—"
+                        "percent_change": percent_change
+                    }
+                else:
+                    last_close = hist['Close'].iloc[-1] if len(hist) == 1 else "Not available"
+                    trend = "—"
 
-                    formatted_price = f"{last_close:.2f} {currency}" if isinstance(last_close, float) else last_close
+                earnings, invested, percent_earned, buy_price = self.calculate_earnings(
+                    symbol, last_close if isinstance(last_close, float) else 0
+                )
+                earnings_info = {
+                    "earnings": earnings,
+                    "currency": currency,
+                    "percent_earned": percent_earned
+                } if earnings is not None else "—"
+                invested_info = {
+                    "invested": f"{invested:.2f}",
+                    "currency": currency,
+                    "buy_price": f"{buy_price:.2f}"
+                } if invested is not None else "—"
 
-                    prices.append({
-                        "symbol": symbol,
-                        "company_name": company_name,
-                        "last_close_price": formatted_price,
-                        "trend": trend,
-                        "invested": invested_info,
-                        "earnings": earnings_info
-                    })
-                except IndexError:
-                    current_time = datetime.now().strftime('%H:%M:%S')
-                    prices.append({
-                        "error": "Data not found",
-                        "symbol": symbol,
-                        "time_checked": current_time
-                    })
-            except ValueError:
-                prices.append({"error": "Data not found", "symbol": symbol})
+                formatted_price = f"{last_close:.2f} {currency}" if isinstance(last_close, float) else last_close
+
+                prices.append({
+                    "symbol": symbol,
+                    "company_name": company_name,
+                    "last_close_price": formatted_price,
+                    "trend": trend,
+                    "invested": invested_info,
+                    "earnings": earnings_info
+                })
+            except ValueError as e:
+                # Handling the case where the symbol is invalid or data could not be fetched.
+                prices.append(["Error", f"[{symbol}]", "N/A", "Invalid Symbol or Data Not Found", "—", "—", "—"])
+            except Exception as e:
+                # General error handling, could be network error, etc.
+                prices.append(["Error", f"[{symbol}]", "N/A", "Error Fetching Data", "—", "—", "—"])
                 
         return prices
 
