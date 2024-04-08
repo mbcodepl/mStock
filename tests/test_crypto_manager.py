@@ -112,3 +112,6 @@ class TestCryptoManager(unittest.TestCase):
         self.assertEqual(invested, 125015)
         self.assertTrue(percentage > 0)
         self.assertEqual(buy_price, 45000)
+
+if __name__ == '__main__':
+    unittest.main()

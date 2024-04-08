@@ -142,3 +142,6 @@ class TestStocksManager(unittest.TestCase):
         stocks_manager = StocksManager(Config())
         result = stocks_manager.get_stock_prices_json('INVALID')
         self.assertTrue(any("Error" in item for item in result))
+
+if __name__ == '__main__':
+    unittest.main()
