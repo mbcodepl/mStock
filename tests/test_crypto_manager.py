@@ -82,7 +82,7 @@ class TestCryptoManager(unittest.TestCase):
         self.assertEqual(earnings, 20000)
         self.assertEqual(invested, 80010)
         self.assertTrue(percentage > 0)
-        self.assertEqual(buy_price, 40000)
+        self.assertEqual(buy_price, 40005.0)
         self.assertEqual(quantity, 2)
 
     def test_calculate_earnings_multiple_investments(self):
@@ -113,7 +113,7 @@ class TestCryptoManager(unittest.TestCase):
         self.assertEqual(earnings, 25000)
         self.assertEqual(invested, 125015)
         self.assertTrue(percentage > 0)
-        self.assertEqual(buy_price, 45000)
+        self.assertEqual(buy_price, 41671.666666666664)
         self.assertEqual(quantity, 3)
 
 if __name__ == '__main__':

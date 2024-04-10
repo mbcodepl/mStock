@@ -74,9 +74,11 @@ class CryptoManager:
                 earnings += (current_price - buy_price) * quantity
                 amount += quantity
 
+        avg_price = invested / amount if amount > 0 else 0
+
         if invested:
             percentage = (earnings / invested) * 100
-        return earnings, invested, percentage, (invested / amount), amount
+        return earnings, invested, percentage, avg_price, amount
     
     def _display_crypto_prices(self, symbols, now):
         crypto_prices = self.get_crypto_prices(";".join(symbols))

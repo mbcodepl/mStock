@@ -118,7 +118,7 @@ class StocksManager:
         total_earnings = 0.0
         percentage_earned = 0.0
         buy_price = 0.0
-        amount = 0.0
+        amount = 0
         fee = 0.0
 
         if symbol in investments:
@@ -132,12 +132,14 @@ class StocksManager:
                 earnings = (current_price - buy_price) * quantity
                 total_earnings += earnings
                 amount += quantity
-
+        
             # Avoid division by zero
             if total_invested > 0:
                 percentage_earned = (total_earnings / total_invested) * 100
 
-        return total_earnings, total_invested, percentage_earned, (total_invested / amount), amount
+        average_buy_price = total_invested / amount if amount > 0 else 0
+
+        return total_earnings, total_invested, percentage_earned, average_buy_price, amount
 
     def _display_stock_prices(self, symbols, now):
         stock_prices = self.get_stock_prices(";".join(symbols))

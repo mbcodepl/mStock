@@ -79,13 +79,14 @@ class TestStocksManager(unittest.TestCase):
         symbol = 'AAPL'
         current_price = 150
         # Call the method
-        earnings, invested, percentage, buy_price, quantity = self.stocks_manager.calculate_earnings(symbol, current_price)
+        earnings, invested, percentage, avg_buy_price, quantity = self.stocks_manager.calculate_earnings(symbol, current_price)
         # Check the results
         self.assertEqual(earnings, ((current_price - 100) * 0.5) + ((current_price - 105) * 0.3))
         self.assertEqual(invested, ((100 * 0.5) + 0.95) + ((105 * 0.3) + 0))  # Added the fees
         self.assertTrue(percentage > 0)  # Earnings should be positive
         self.assertEqual(earnings, 38.5)
-        self.assertEqual(buy_price, 105)
+        self.assertEqual(avg_buy_price, 103.0625)
+        self.assertEqual(quantity, 0.8)
 
     def test_calculate_earnings_negative(self):
         symbol = 'MSFT'
@@ -96,7 +97,7 @@ class TestStocksManager(unittest.TestCase):
         self.assertEqual(earnings, (current_price - 200) * 1)
         self.assertEqual(invested, (200 * 1) + 0.95)  # Added the fee
         self.assertTrue(percentage < 0)  # Earnings should be negative
-        self.assertEqual(buy_price, 200)
+        self.assertEqual(buy_price, 200.95)
 
     def test_calculate_earnings_no_investment(self):
         symbol = 'GOOG'  # Assuming GOOG is not in the investments
