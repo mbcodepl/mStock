@@ -51,12 +51,13 @@ class TestCryptoManager(unittest.TestCase):
         symbol = "BTC"
         current_price = 50000
 
-        earnings, invested, percentage, buy_price = self.crypto_manager.calculate_earnings(symbol, current_price)
+        earnings, invested, percentage, buy_price, quantity  = self.crypto_manager.calculate_earnings(symbol, current_price)
 
         self.assertEqual(earnings, 0)
         self.assertEqual(invested, 0)
         self.assertEqual(percentage, 0)
         self.assertEqual(buy_price, 0)
+        self.assertEqual(quantity, 0)
 
     def test_calculate_earnings_single_investment(self):
         symbol = "BTC"
@@ -76,12 +77,13 @@ class TestCryptoManager(unittest.TestCase):
             }
         }
 
-        earnings, invested, percentage, buy_price = self.crypto_manager.calculate_earnings(symbol, current_price)
+        earnings, invested, percentage, buy_price, quantity = self.crypto_manager.calculate_earnings(symbol, current_price)
 
         self.assertEqual(earnings, 20000)
         self.assertEqual(invested, 80010)
         self.assertTrue(percentage > 0)
         self.assertEqual(buy_price, 40000)
+        self.assertEqual(quantity, 2)
 
     def test_calculate_earnings_multiple_investments(self):
         symbol = "BTC"
@@ -106,12 +108,13 @@ class TestCryptoManager(unittest.TestCase):
             }
         }
 
-        earnings, invested, percentage, buy_price = self.crypto_manager.calculate_earnings(symbol, current_price)
+        earnings, invested, percentage, buy_price, quantity = self.crypto_manager.calculate_earnings(symbol, current_price)
 
         self.assertEqual(earnings, 25000)
         self.assertEqual(invested, 125015)
         self.assertTrue(percentage > 0)
         self.assertEqual(buy_price, 45000)
+        self.assertEqual(quantity, 3)
 
 if __name__ == '__main__':
     unittest.main()

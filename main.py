@@ -17,7 +17,7 @@ def main():
 
     if args.serve:
         # If --serve is specified, start the Flask web server
-        app.run(debug=True, port=5000)  # You can change the port if needed
+        app.run(debug=True, port=5001)  # You can change the port if needed
     elif args.silent:
         runner.run_silent()
     else:

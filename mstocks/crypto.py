@@ -36,7 +36,7 @@ class CryptoManager:
 
                 # Convert USD price to PLN
                 pln_price = self.convert_to_pln(last_close)
-                earnings, invested, percent_earned, buy_price = self.calculate_earnings(symbol, pln_price if isinstance(pln_price, float) else 0)
+                earnings, invested, percent_earned, buy_price, quantity = self.calculate_earnings(symbol, pln_price if isinstance(pln_price, float) else 0)
                 earnings_str = Utils._format_value(earnings, "PLN", percent_earned) if earnings is not None else "—"
                 invested_str = f"{invested:.2f} PLN" if invested is not None else "—"                
 
@@ -60,6 +60,7 @@ class CryptoManager:
         invested = 0
         buy_price = 0
         percentage = 0
+        amount = 0
         fee = 0
         investments = self.config.get('investments', {}).get("cryptos", {})
 
@@ -71,10 +72,11 @@ class CryptoManager:
 
                 invested += (buy_price * quantity) + fee
                 earnings += (current_price - buy_price) * quantity
+                amount += quantity
 
         if invested:
             percentage = (earnings / invested) * 100
-        return earnings, invested, percentage, buy_price
+        return earnings, invested, percentage, (invested / amount), amount
     
     def _display_crypto_prices(self, symbols, now):
         crypto_prices = self.get_crypto_prices(";".join(symbols))

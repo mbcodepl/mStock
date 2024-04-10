@@ -79,7 +79,7 @@ class TestStocksManager(unittest.TestCase):
         symbol = 'AAPL'
         current_price = 150
         # Call the method
-        earnings, invested, percentage, buy_price = self.stocks_manager.calculate_earnings(symbol, current_price)
+        earnings, invested, percentage, buy_price, quantity = self.stocks_manager.calculate_earnings(symbol, current_price)
         # Check the results
         self.assertEqual(earnings, ((current_price - 100) * 0.5) + ((current_price - 105) * 0.3))
         self.assertEqual(invested, ((100 * 0.5) + 0.95) + ((105 * 0.3) + 0))  # Added the fees
@@ -91,7 +91,7 @@ class TestStocksManager(unittest.TestCase):
         symbol = 'MSFT'
         current_price = 190
         # Call the method
-        earnings, invested, percentage, buy_price = self.stocks_manager.calculate_earnings(symbol, current_price)
+        earnings, invested, percentage, buy_price, quantity = self.stocks_manager.calculate_earnings(symbol, current_price)
         # Check the results
         self.assertEqual(earnings, (current_price - 200) * 1)
         self.assertEqual(invested, (200 * 1) + 0.95)  # Added the fee
@@ -102,18 +102,19 @@ class TestStocksManager(unittest.TestCase):
         symbol = 'GOOG'  # Assuming GOOG is not in the investments
         current_price = 1000
         # Call the method
-        earnings, invested, percentage, buy_price = self.stocks_manager.calculate_earnings(symbol, current_price)
+        earnings, invested, percentage, buy_price, quantity = self.stocks_manager.calculate_earnings(symbol, current_price)
         # Check the results
         self.assertEqual(earnings, 0)
         self.assertEqual(invested, 0)
         self.assertEqual(percentage, 0)
         self.assertEqual(buy_price, 0)
+        self.assertEqual(quantity, 0)
 
     def test_calculate_earnings_zero_invested(self):
         symbol = 'GOOG'  # Assuming GOOG is not in the investments
         current_price = 1000
         # Call the method
-        earnings, invested, percentage, buy_price = self.stocks_manager.calculate_earnings(symbol, current_price)
+        earnings, invested, percentage, buy_price, quantity = self.stocks_manager.calculate_earnings(symbol, current_price)
         # Check the results
         self.assertEqual(earnings, 0)
         self.assertEqual(invested, 0)

@@ -36,7 +36,7 @@ class StocksManager:
                     last_close = hist['Close'].iloc[-1] if len(hist) == 1 else "Not available"
                     trend = "—"
                 
-                earnings, invested, percent_earned, buy_price = self.calculate_earnings(symbol, last_close if isinstance(last_close, float) else 0)
+                earnings, invested, percent_earned, buy_price, quantity = self.calculate_earnings(symbol, last_close if isinstance(last_close, float) else 0)
                 earnings_str = Utils._format_value(earnings, currency, percent_earned) if earnings is not None else "—"
                 invested_str = f"{invested:.2f} {currency} [{buy_price:.2f}]" if invested is not None else "—"
 
@@ -77,7 +77,7 @@ class StocksManager:
                     last_close = hist['Close'].iloc[-1] if len(hist) == 1 else "Not available"
                     trend = "—"
 
-                earnings, invested, percent_earned, buy_price = self.calculate_earnings(
+                earnings, invested, percent_earned, buy_price, quantity = self.calculate_earnings(
                     symbol, last_close if isinstance(last_close, float) else 0
                 )
                 earnings_info = {
@@ -88,6 +88,7 @@ class StocksManager:
                 invested_info = {
                     "invested": f"{invested:.2f}",
                     "currency": currency,
+                    "quantity": f"{quantity:.2f}",
                     "buy_price": f"{buy_price:.2f}"
                 } if invested is not None else "—"
 
@@ -117,6 +118,7 @@ class StocksManager:
         total_earnings = 0.0
         percentage_earned = 0.0
         buy_price = 0.0
+        amount = 0.0
         fee = 0.0
 
         if symbol in investments:
@@ -129,12 +131,13 @@ class StocksManager:
                 total_invested += invested
                 earnings = (current_price - buy_price) * quantity
                 total_earnings += earnings
+                amount += quantity
 
             # Avoid division by zero
             if total_invested > 0:
                 percentage_earned = (total_earnings / total_invested) * 100
 
-        return total_earnings, total_invested, percentage_earned, buy_price
+        return total_earnings, total_invested, percentage_earned, (total_invested / amount), amount
 
     def _display_stock_prices(self, symbols, now):
         stock_prices = self.get_stock_prices(";".join(symbols))
