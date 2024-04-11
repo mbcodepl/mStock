@@ -119,24 +119,18 @@ class TestCryptoManager(unittest.TestCase):
     @patch('mstocks.stocks.yf.Ticker')
     @patch('mstocks.stocks.Config')
     def test_correct_json_structure(self, mock_config, mock_ticker):
-        mock_config_instance = mock_config.return_value
-        mock_config_instance.get.side_effect = lambda key, default: {"crypto": "True", "currency_map": {"BTC": "USD"}}[key] if key in ["crypto", "currency_map"] else default
-        stocks_manager = CryptoManager(mock_config_instance)
+        # Mocking responses
+        mock_stock_instance = mock_ticker.return_value
+        mock_stock_instance.history.return_value = MagicMock(Close={'2022-03-08': 150, '2022-03-09': 155})
+        mock_stock_instance.info.return_value = {'symbol': 'BTC-USD'}
 
-        # Setup a mock DataFrame response
-        data = {
-            'Close': [50000, 51000],
-        }
-        mock_hist = pd.DataFrame(data)
-
-        # Mock the history method to return our mock DataFrame
-        mock_ticker.return_value.history.return_value = mock_hist
-
-        result = stocks_manager.get_crypto_prices_json("BTC-USD")
-        # Adjust your assertions as necessary. The following is a placeholder.
-        # For example, check if "BTC-USD" or "51000.00 USD" appears in any of the strings in the result list.
-        self.assertTrue(any("BTC-USD" in item for item in result[0]), "BTC-USD should be in the results")
-
+        crypto = CryptoManager(mock_config.return_value)
+        result = crypto.get_crypto_prices_json('BTC-USD')
+        # We expect the result to be a list of dictionaries with specific keys
+        self.assertIsInstance(result, list)
+        self.assertIsInstance(result[0], dict)
+        expected_keys = ["symbol", "last_close_price", "trend", "invested", "earnings"]
+        self.assertTrue(all(key in result[0] for key in expected_keys))
 
 if __name__ == '__main__':
     unittest.main()
