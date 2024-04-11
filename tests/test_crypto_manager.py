@@ -116,5 +116,27 @@ class TestCryptoManager(unittest.TestCase):
         self.assertEqual(buy_price, 41671.666666666664)
         self.assertEqual(quantity, 3)
 
+    @patch('mstocks.stocks.yf.Ticker')
+    @patch('mstocks.stocks.Config')
+    def test_correct_json_structure(self, mock_config, mock_ticker):
+        mock_config_instance = mock_config.return_value
+        mock_config_instance.get.side_effect = lambda key, default: {"crypto": "True", "currency_map": {"BTC": "USD"}}[key] if key in ["crypto", "currency_map"] else default
+        stocks_manager = CryptoManager(mock_config_instance)
+
+        # Setup a mock DataFrame response
+        data = {
+            'Close': [50000, 51000],
+        }
+        mock_hist = pd.DataFrame(data)
+
+        # Mock the history method to return our mock DataFrame
+        mock_ticker.return_value.history.return_value = mock_hist
+
+        result = stocks_manager.get_crypto_prices_json("BTC-USD")
+        # Adjust your assertions as necessary. The following is a placeholder.
+        # For example, check if "BTC-USD" or "51000.00 USD" appears in any of the strings in the result list.
+        self.assertTrue(any("BTC-USD" in item for item in result[0]), "BTC-USD should be in the results")
+
+
 if __name__ == '__main__':
     unittest.main()
