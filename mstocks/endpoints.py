@@ -19,3 +19,18 @@ def api_get_stocks_by_symbols(symbols):
     manager = StocksManager(config)
     stock_prices = manager.get_stock_prices_json(symbols)
     return jsonify(stock_prices)
+
+@app.route('/api/crypto', methods=['GET'])
+def api_get_crypto():
+    config = Config()
+    manager = CryptoManager(config)
+    crypto_symbols = config.get('default_cryptos', [])
+    crypto_prices = manager.get_crypto_prices_json(";".join(crypto_symbols))
+    return jsonify(crypto_prices)
+
+@app.route('/api/crypto/<symbols>', methods=['GET'])
+def api_get_crypto_by_symbols(symbols):
+    config = Config()
+    manager = CryptoManager(config)
+    crypto_prices = manager.get_crypto_prices_json(symbols)
+    return jsonify(crypto_prices)

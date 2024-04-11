@@ -46,6 +46,61 @@ class CryptoManager:
                 current_time = datetime.now().strftime('%H:%M:%S')
                 prices.append(["Error", f"[{symbol}]", "N/A", "Not found", current_time, "—"])
         return prices
+    
+    # Thisn method fetches the stock prices for the given symbols
+    # it returns a list of lists containing the stock prices in array format
+    def get_crypto_prices_json(self, symbols):
+        prices = []
+        for symbol in symbols.split(';'):
+            symbol = symbol.strip()
+            try:
+                crypto = yf.Ticker(symbol)
+                hist = crypto.history(period="2d")
+                currency = self.utils.get_currency(symbol, self.currency_map)
+                if len(hist) > 1:
+                    last_close = hist['Close'].iloc[-1]
+                    prev_close = hist['Close'].iloc[-2]
+                    price_change = last_close - prev_close
+                    percent_change = (price_change / prev_close) * 100
+                    # Determine the price direction
+                    trend = {
+                        "price_change": price_change,
+                        "percent_change": percent_change
+                    }
+                else:
+                    last_close = hist['Close'].iloc[-1] if len(hist) == 1 else 0
+                    trend = "—"
+
+                pln_price = self.convert_to_pln(last_close)
+                earnings, invested, percent_earned, buy_price, quantity = self.calculate_earnings(symbol, pln_price if isinstance(pln_price, float) else 0)
+                
+                earnings_info = {
+                    "earnings": earnings,
+                    "percent_earned": percent_earned
+                } if earnings is not None else "—"
+                invested_info = {
+                    "invested": f"{invested:.2f}",
+                    "quantity": f"{quantity:.2f}",
+                    "average_buy_price": f"{buy_price:.2f}"
+                } if invested is not None else "—"
+
+                formatted_price = f"{last_close:.2f} {currency}" if isinstance(last_close, float) else last_close
+
+                prices.append({
+                    "symbol": symbol,
+                    "last_close_price": formatted_price,
+                    "trend": trend,
+                    "invested": invested_info,
+                    "earnings": earnings_info
+                })
+            except ValueError as e:
+                # Handling the case where the symbol is invalid or data could not be fetched.
+                prices.append(["Error", f"[{symbol}]", "N/A", "Invalid Symbol or Data Not Found", "—", "—", "—"])
+            except Exception as e:
+                # General error handling, could be network error, etc.
+                prices.append(["Error", f"[{symbol}]", "N/A", "Error Fetching Data", "—", "—", "—"])
+                
+        return prices
 
     def convert_to_pln(self, usd_price):
         # Use an API or library to get the exchange rate from USD to PLN
